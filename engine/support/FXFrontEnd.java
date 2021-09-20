@@ -65,6 +65,7 @@ public abstract class FXFrontEnd extends CS1971FrontEnd {
 		canvas = new CS1971Canvas();
 		
 		scene = new Scene(canvas.root(), currentStageSize.x, currentStageSize.y);
+		// change resize so that it also takes in new stage sizes
 		canvas.resize(currentStageSize);
 		stage.setScene(scene);
 				

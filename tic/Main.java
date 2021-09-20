@@ -2,6 +2,7 @@ package tic;
 
 import engine.support.FXApplication;
 import engine.support.FXFrontEnd;
+import engine.support.Vec2d;
 
 /**
  * Here is your main class. You should not have to edit this
@@ -11,7 +12,8 @@ import engine.support.FXFrontEnd;
 public class Main {
 
     public static void main(String[] args) {
-        FXFrontEnd app = new App("Tic-Tac-Toe");
+        FXFrontEnd app = new App("Tic-Tac-Toe", new Vec2d(1200, 800),
+                false, false);
         FXApplication application = new FXApplication();
         application.begin(app);
     }

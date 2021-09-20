@@ -6,7 +6,6 @@ import tic.App;
 public class FXApplication extends javafx.application.Application {
 		
 	private static FXFrontEnd fx;
-	
 
 	public static void begin(FXFrontEnd fx) {
 		FXApplication.fx = fx;

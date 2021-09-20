@@ -20,6 +20,11 @@ import javafx.scene.input.ScrollEvent;
  */
 
 public abstract class CS1971FrontEnd {
+
+	/**
+	 * A measurement of how much time has passed
+	 */
+	private long timeElapsed = 0;
 	
 	/**
 	 * Default window size if subclasses doesn't specify.
