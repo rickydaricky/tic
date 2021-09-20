@@ -6,8 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
+import tic.App;
 
 /**
  * This is your main Application class that you will contain your
@@ -46,11 +45,6 @@ public class Application extends FXFrontEnd {
    */
   @Override
   protected void onDraw(GraphicsContext g) {
-    g.setFill(Color.RED);
-    g.setStroke(Color.BLUE);
-    g.setLineWidth(3);
-    g.strokeLine(40, 40, 10, 40);
-
   }
 
   /**
@@ -68,7 +62,6 @@ public class Application extends FXFrontEnd {
    */
   @Override
   protected void onKeyPressed(KeyEvent e) {
-
   }
 
   /**
@@ -86,7 +79,6 @@ public class Application extends FXFrontEnd {
    */
   @Override
   protected void onMouseClicked(MouseEvent e) {
-
   }
 
   /**

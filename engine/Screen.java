@@ -7,14 +7,18 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Screen class
+ */
 public class Screen extends FXFrontEnd {
 
   private boolean active = false;
   private String title = "";
   private long timeElapsed = 0;
-  private List<UIElement> elements;
+  private List<UIElement> elements = new ArrayList<>();
 
   /**
    * Matches the first constructor of FXFrontEnd
@@ -178,25 +182,22 @@ public class Screen extends FXFrontEnd {
   }
 
   /**
-   * Turns the screen on.
-   */
-  public void setActive() {
-    this.active = true;
-    startScreen();
-  }
-
-  /**
    * Turns the screen off.
    */
   public void setInactive() {
     this.active = false;
   }
 
-  public void startScreen() {
-    System.out.println("Screen Has Started!");
-    for (UIElement ele : elements) {
-      ele.draw();
-    }
+  public void addUIElement(UIElement ele) {
+    elements.add(ele);
+  }
+
+  /**
+   * Returns elements
+   * @return a list of UIElements
+   */
+  public List<UIElement> getElements() {
+    return elements;
   }
 
 

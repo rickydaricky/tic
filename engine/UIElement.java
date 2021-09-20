@@ -1,6 +1,7 @@
 package engine;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public abstract class UIElement extends Screen {
 
@@ -16,10 +17,20 @@ public abstract class UIElement extends Screen {
   }
 
   /**
-   * Calls onDraw for the current element.
+   * Called periodically and meant to draw graphical components.
+   *
+   * @param g a {@link GraphicsContext} object used for drawing.
    */
-  public void draw() {
-    onDraw(g);
+  @Override
+  protected void onDraw(GraphicsContext g) {
+    g.setFill(Color.RED);
+    g.setStroke(Color.BLUE);
+    g.setLineWidth(3);
+    g.strokeLine(40, 40, 10, 40);
+  }
+
+  public GraphicsContext convert(GraphicsContext g) {
+    return g;
   }
 
 }
