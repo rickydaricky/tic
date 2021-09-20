@@ -1,5 +1,7 @@
 package engine;
 
+import engine.UIElements.Button;
+import engine.UIElements.Rectangle;
 import engine.support.FXFrontEnd;
 import engine.support.Vec2d;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,6 +24,7 @@ public class Screen extends FXFrontEnd {
 
   /**
    * Matches the first constructor of FXFrontEnd
+   *
    * @param title the title of the screen
    */
   public Screen(String title) {
@@ -31,6 +34,7 @@ public class Screen extends FXFrontEnd {
 
   /**
    * Matches the second constructor of FXFrontEnd
+   *
    * @param title the title of the screen
    */
   public Screen(String title, Vec2d windowSize, boolean debugMode, boolean fullscreen, List<UIElement> elements) {
@@ -181,25 +185,79 @@ public class Screen extends FXFrontEnd {
 
   }
 
-  /**
-   * Turns the screen off.
-   */
-  public void setInactive() {
-    this.active = false;
-  }
-
   public void addUIElement(UIElement ele) {
     elements.add(ele);
   }
 
   /**
    * Returns elements
+   *
    * @return a list of UIElements
    */
   public List<UIElement> getElements() {
     return elements;
   }
 
+
+  /**
+   * Returns true or false depending on whether the screen is active.
+   *
+   * @return a boolean
+   */
+  public boolean getActive() {
+    return active;
+  }
+
+  /**
+   * Sets active to true.
+   */
+  public void setActive() {
+    active = true;
+  }
+
+  /**
+   * Sets active to false.
+   */
+  public void setInactive() {
+    active = false;
+  }
+
+  public boolean between(double x, double y, double x1, double y1, double x2, double y2) {
+    if (x > x1 && x < x2 && y > y1 && y < y2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Checks if a mouse coordinate is located within a button.
+   *
+   * @param x the x location
+   * @param y the y location
+   * @param b the button
+   * @return boolean
+   */
+  public static boolean between(double x, double y, Button b) {
+
+    Rectangle shape = b.getShape();
+    double x1 = shape.getX1();
+    double x2 = shape.getX2();
+    double y1 = shape.getY1();
+    double y2 = shape.getY2();
+    double strokeWidth = shape.getStrokeWidth();
+
+    System.out.println("x: " + x + " y: " + y + " x1: " + x1 + " y1: " + y1 + " x2 " + x2 + " y2 " + y2);
+
+    return x > x1 && x < x2 && y > (y1 - strokeWidth / 2) && y < (y2 + strokeWidth / 2);
+  }
+
+  /**
+   * Clears the canvas of images.
+   */
+  public void clear() {
+    elements = new ArrayList<>();
+  }
 
 
 }

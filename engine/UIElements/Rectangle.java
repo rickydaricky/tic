@@ -59,4 +59,35 @@ public class Rectangle extends UIElement {
     return g;
   }
 
+  /**
+   * returns x1.
+   * @return x1
+   */
+  public double getX1() {return x1;}
+
+  /**
+   * returns x2.
+   * @return x2
+   */
+  public double getX2() {return x2;}
+
+  /**
+   * returns y1.
+   * @return y1
+   */
+  public double getY1() {return y1;}
+
+  /**
+   * returns y2.
+   * @return y2.
+   */
+  public double getY2() {return y2;}
+
+  /**
+   * Returns strokeWidth.
+   * @return strokeWidth
+   */
+  public double getStrokeWidth() {return strokeWidth;}
+
+
 }
