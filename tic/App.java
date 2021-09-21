@@ -398,6 +398,9 @@ public class App extends Application {
 
     homeScreen.setActive();
 
+    Rectangle homeBackground = new Rectangle("homeBackground", screenWidth/2,
+            screenHeight/2, screenHeight/2, screenColor.TURQUOISE, Color.TURQUOISE);
+
     Text titleWords = new Text("title", screenWidth / 2.1, screenHeight / 4,
             "Tic-Tac-Toe", Color.BLACK, 32);
     homeScreen.addUIElement(titleWords);
