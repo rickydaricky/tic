@@ -1,1 +1,9 @@
-Tell us how to play your game in this file.
+To play the game, simply launch it by running main.java, then press the "Start Game" button.
+
+Once there, you and the other player will take turns selecting open spaces in the tic-tac-toe field to try and connect 3 in a row in any direction, and within 5 seconds per turn. The first person to do so wins!
+
+If the game draws (all the available spaces are filled and nobody has won yet) just restart the game!
+
+To restart the game at any time, just press the "Restart Game" button in the game screen.
+
+Feel free to exit the game screen and return to the homepage as well by pressing the "escape" button  on your keyboard. Have fun!

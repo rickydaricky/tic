@@ -279,5 +279,18 @@ public class Screen extends FXFrontEnd {
     return title;
   }
 
+  /**
+   * Returns the UIElement corresponding to the title.
+   *
+   * @return a string
+   */
+  public UIElement get(String title) {
+    UIElement answer = null;
+    for (UIElement s : elements) {
+      if (s.getTitle().equals(title)) answer = s;
+    }
+    return answer;
+  }
+
 
 }

@@ -39,7 +39,6 @@ public class App extends Application {
   boolean xTurn = true;
   boolean gameOver = true;
   Screen mainScreen = new Screen("mainScreen");
-  Screen xoScreen = new Screen("xoScreen");
   Screen homeScreen = new Screen("homeScreen");
   HashMap<Integer, Integer> chosen = new HashMap<>();
   Set<Integer> p1 = new HashSet<>();
@@ -86,6 +85,13 @@ public class App extends Application {
   }
 
   private void mainScreenDraw() {
+
+    Rectangle homeBackground = new Rectangle("homeBackground", screenWidth / 2,
+            0, screenWidth / 2, screenHeight, screenWidth,
+            Color.TURQUOISE, Color.TURQUOISE);
+    mainScreen.addUIElement(homeBackground);
+
+
     for (int i = 1; i <= 4; i++) {
       Rectangle line = new Rectangle("Line " + Integer.toString(i),
               base + xGap * (i - 1), base, base + xGap * (i - 1), base + yGap * 3, 5,
@@ -101,7 +107,7 @@ public class App extends Application {
 
       Rectangle restartButtonRect = new Rectangle("restartButtonRect", screenWidth * 3 / 4,
               screenHeight * 2 / 4, screenWidth * 3.5 / 4, screenHeight * 2 / 4, screenHeight / 16,
-              Color.TURQUOISE, Color.BLACK);
+              Color.TURQUOISE, Color.ORANGE);
       Text restartButtonText = new Text("restartButtonText", screenWidth * 3 / 4.1, screenHeight * 2 / 3.9,
               "Restart Game", Color.FIREBRICK, 32);
       Button restartButton = new Button("restartButton", restartButtonRect, restartButtonText);
@@ -143,12 +149,15 @@ public class App extends Application {
 
     }
 
+    Rectangle temp = (Rectangle) mainScreen.get("timerForeGroundRect");
+    double y = temp.getY1();
+    double tempS = temp.getStrokeWidth();
+
     mainScreen.removeUIElement("timerForeGroundRect");
     Rectangle timerForeGroundRect = new Rectangle("timerForeGroundRect", screenWidth * 3 / 4,
-            screenHeight * 1 / 4, screenWidth * 3.5 / 4 - screenWidth * 0.5 / 4 + screenWidth
-            * 0.5 / 4 * ((double) timeSinceLastChose / (double) allotedTime),
-            screenHeight * 1 / 4,
-            screenHeight / 16, Color.ORANGE, Color.ORANGE);
+            y, screenWidth * 3.5 / 4 - screenWidth * 0.5 / 4 + screenWidth
+            * 0.5 / 4 * ((double) timeSinceLastChose / (double) allotedTime), y,
+            tempS, Color.ORANGE, Color.ORANGE);
 
     mainScreen.addUIElement(timerForeGroundRect);
   }
@@ -180,6 +189,39 @@ public class App extends Application {
     return ans;
   }
 
+
+  /**
+   * Called when the mouse is moved.
+   *
+   * @param e an FX {@link MouseEvent} representing the input event.
+   */
+  @Override
+  protected void onMouseMoved(MouseEvent e) {
+    hover(e, homeScreen);
+    hover(e, mainScreen);
+  }
+
+  /**
+   * Determines if mouse is hovering over a button in a scene and if so changes its color.
+   *
+   * @param e mouse event
+   * @param s screen
+   */
+  private void hover(MouseEvent e, Screen s) {
+    if (s.getActive()) {
+      for (UIElement ui : s.getElements()) {
+        if (ui instanceof Button) {
+          if (Screen.between(e.getX(), e.getY(), (Button) ui)) {
+            ((Button) ui).changeBackgroundColor(Color.LIGHTBLUE);
+          } else {
+            ((Button) ui).changeBackgroundColor(Color.GOLD);
+          }
+        }
+      }
+    }
+  }
+
+
   /**
    * Called when the mouse is clicked.
    *
@@ -187,8 +229,6 @@ public class App extends Application {
    */
   @Override
   protected void onMouseClicked(MouseEvent e) {
-
-    System.out.println("x: " + e.getX() + " y: " + e.getY());
 
     // X and Os for game screen
 
@@ -216,12 +256,11 @@ public class App extends Application {
     if (homeScreen.getActive()) {
       for (UIElement ui : homeScreen.getElements()) {
         if (ui instanceof Button && Screen.between(e.getX(), e.getY(), (Button) ui)) {
-          String t = ((Button) ui).getTitle();
+          String t = ui.getTitle();
           switch (t) {
             case "startButton":
               homeScreen.setInactive();
               mainScreen.setActive();
-              xoScreen.setActive();
               gameOver = false;
               break;
             default:
@@ -288,7 +327,8 @@ public class App extends Application {
 
   /**
    * Called when a key is pressed.
-   * @param e		an FX {@link KeyEvent} representing the input event.
+   *
+   * @param e an FX {@link KeyEvent} representing the input event.
    */
   @Override
   protected void onKeyPressed(KeyEvent e) {
@@ -296,7 +336,6 @@ public class App extends Application {
     if (character.equals("ESCAPE")) {
       homeScreen.setActive();
       mainScreen.setInactive();
-      xoScreen.setInactive();
       gameOver = true;
     }
   }
@@ -311,8 +350,6 @@ public class App extends Application {
     int column = boxNum % size;
     if (column == 0) column = size;
     int row = (boxNum - column) / size + 1;
-
-    System.out.println("Game Over: " + gameOver);
 
     if (chosen.get(boxNum) == 0 && !gameOver) {
       if (xTurn) {
@@ -337,7 +374,6 @@ public class App extends Application {
         p2.add(boxNum);
         timeSinceLastChose = 0L;
       }
-      screens.add(xoScreen);
     }
   }
 
@@ -398,10 +434,12 @@ public class App extends Application {
 
     homeScreen.setActive();
 
-    Rectangle homeBackground = new Rectangle("homeBackground", screenWidth/2,
-            screenHeight/2, screenHeight/2, screenColor.TURQUOISE, Color.TURQUOISE);
+    Rectangle homeBackground = new Rectangle("homeBackground", screenWidth / 2,
+            0, screenWidth / 2, screenHeight, screenWidth,
+            Color.TURQUOISE, Color.TURQUOISE);
+    homeScreen.addUIElement(homeBackground);
 
-    Text titleWords = new Text("title", screenWidth / 2.1, screenHeight / 4,
+    Text titleWords = new Text("title", screenWidth / 2.2, screenHeight / 4,
             "Tic-Tac-Toe", Color.BLACK, 32);
     homeScreen.addUIElement(titleWords);
 
@@ -410,10 +448,10 @@ public class App extends Application {
     mainScreen.addUIElement(turnText);
 
     // Buttons
-    Rectangle startButtonRect = new Rectangle("startButtonRect", screenHeight / 2.5, screenWidth / 2.5,
-            screenHeight / 1.5, screenWidth / 2.5, screenHeight / 16,
-            Color.TURQUOISE, Color.BLACK);
-    Text startButtonText = new Text("startButtonText", screenHeight / 2.5, screenWidth / 2.5,
+    Rectangle startButtonRect = new Rectangle("startButtonRect", screenWidth / 2.7, screenHeight / 2.5,
+            screenWidth / 1.5, screenHeight / 2.5, screenHeight / 16,
+            Color.GOLD, Color.GOLD);
+    Text startButtonText = new Text("startButtonText", screenWidth / 2.3, screenHeight / 2.45,
             "Start Game", Color.FIREBRICK, 32);
     Button startButton = new Button("startButton", startButtonRect, startButtonText);
     homeScreen.addUIElement(startButton);

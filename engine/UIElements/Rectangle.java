@@ -110,5 +110,13 @@ public class Rectangle implements UIElement {
    */
   public double getStrokeWidth() {return strokeWidth;}
 
+  /**
+   * Changes the color of the rectangle
+   * @param c the new color
+   */
+  public void setColor(Color c) {
+    strokeColor = c;
+    fillColor = c;
+  }
 
 }

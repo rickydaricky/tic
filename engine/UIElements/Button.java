@@ -2,6 +2,7 @@ package engine.UIElements;
 
 import engine.UIElement;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 /**
  * Button Class
@@ -30,6 +31,7 @@ public class Button implements UIElement {
 
   /**
    * Inserts the parameters into the GraphicsContext
+   *
    * @param g input graphicsContext
    * @return new graphicsContext
    */
@@ -42,6 +44,7 @@ public class Button implements UIElement {
 
   /**
    * Returns shape.
+   *
    * @return the shape
    */
   public Rectangle getShape() {
@@ -50,6 +53,7 @@ public class Button implements UIElement {
 
   /**
    * Returns title.
+   *
    * @return the title
    */
   public String getTitle() {
@@ -66,6 +70,15 @@ public class Button implements UIElement {
   public void update(double xScale, double yScale) {
     this.shape.update(xScale, yScale);
     this.text.update(xScale, yScale);
+  }
+
+  /**
+   * Changes the button's background color.
+   *
+   * @param c the new color
+   */
+  public void changeBackgroundColor(Color c) {
+    shape.setColor(c);
   }
 
 
