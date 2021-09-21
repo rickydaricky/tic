@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 /**
  * Circle class
  */
-public class Circle extends UIElement {
+public class Circle implements UIElement {
 
   private String title;
   private double strokeWidth;
@@ -25,7 +25,6 @@ public class Circle extends UIElement {
    */
   public Circle(String title, double x, double y, double w, double h,
                 double strokeWidth, Color fillColor, Color strokeColor) {
-    super(title);
 
     this.title = title;
     this.x = x;
@@ -49,6 +48,30 @@ public class Circle extends UIElement {
     g.setLineWidth(strokeWidth);
     g.strokeOval(x, y, w, h);
     return g;
+  }
+
+  /**
+   * Returns the title.
+   *
+   * @return the title.
+   */
+  @Override
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * Updates for resizing
+   *
+   * @param xScale the x scale
+   * @param yScale the y scale
+   */
+  @Override
+  public void update(double xScale, double yScale) {
+    this.x = x * xScale;
+    this.y = y * yScale;
+    this.w = w * xScale;
+    this.h = h * yScale;
   }
 
 }

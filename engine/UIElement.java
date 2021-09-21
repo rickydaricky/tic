@@ -3,36 +3,27 @@ package engine;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public abstract class UIElement extends Screen {
-
-  private GraphicsContext g;
+public interface UIElement {
 
   /**
-   * Matches the first constructor of FXFrontEnd
-   *
-   * @param title the title of the screen
+   * Adds to graphicsContext
+   * @param g graphicsContext
+   * @return graphicsContext
    */
-  public UIElement(String title) {
-    super(title);
-  }
+  GraphicsContext convert(GraphicsContext g);
 
   /**
-   * Called periodically and meant to draw graphical components.
-   *
-   * @param g a {@link GraphicsContext} object used for drawing.
+   * Returns the title.
+   * @return the title.
    */
-  @Override
-  protected void onDraw(GraphicsContext g) {
-    g.setFill(Color.RED);
-    g.setStroke(Color.BLUE);
-    g.setLineWidth(3);
-    g.strokeLine(40, 40, 10, 40);
-  }
+  String getTitle();
 
-  public GraphicsContext convert(GraphicsContext g) {
-    return g;
-  }
-
+  /**
+   * Updates for resizing
+   * @param xScale the x scale
+   * @param yScale the y scale
+   */
+  void update(double xScale, double yScale);
 }
 
 

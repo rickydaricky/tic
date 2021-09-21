@@ -18,7 +18,7 @@ import java.util.List;
 public class Screen extends FXFrontEnd {
 
   private boolean active = false;
-  private String title = "";
+  private final String title;
   private long timeElapsed = 0;
   private List<UIElement> elements = new ArrayList<>();
 
@@ -189,6 +189,17 @@ public class Screen extends FXFrontEnd {
     elements.add(ele);
   }
 
+
+  public void removeUIElement(String title) {
+    List<UIElement> tempElements = new ArrayList<>();
+    for (UIElement ui : elements) {
+      if (!ui.getTitle().equals(title)) {
+        tempElements.add(ui);
+      }
+    }
+    elements = tempElements;
+  }
+
   /**
    * Returns elements
    *
@@ -257,6 +268,15 @@ public class Screen extends FXFrontEnd {
    */
   public void clear() {
     elements = new ArrayList<>();
+  }
+
+  /**
+   * Returns the title.
+   *
+   * @return the title
+   */
+  public String getTitle() {
+    return title;
   }
 
 

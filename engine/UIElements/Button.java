@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 /**
  * Button Class
  */
-public class Button extends UIElement {
+public class Button implements UIElement {
 
   private String title;
   private Rectangle shape;
@@ -22,7 +22,6 @@ public class Button extends UIElement {
    * @param text  the button label
    */
   public Button(String title, Rectangle shape, Text text) {
-    super(title);
 
     this.title = title;
     this.shape = shape;
@@ -55,6 +54,18 @@ public class Button extends UIElement {
    */
   public String getTitle() {
     return title;
+  }
+
+  /**
+   * Updates for resizing
+   *
+   * @param xScale the x scale
+   * @param yScale the y scale
+   */
+  @Override
+  public void update(double xScale, double yScale) {
+    this.shape.update(xScale, yScale);
+    this.text.update(xScale, yScale);
   }
 
 

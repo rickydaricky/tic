@@ -9,6 +9,7 @@ import engine.UIElements.Rectangle;
 import engine.UIElements.Text;
 import engine.support.Vec2d;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -25,11 +26,14 @@ import java.util.Set;
  */
 public class App extends Application {
 
+  double originalX = 1200;
+  double originalY = 800;
   double screenWidth = 1200;
   double screenHeight = 800;
   long timeSinceStart = 0;
   long timeSincePlay = 0;
-  double gap = 200;
+  double xGap = 200;
+  double yGap = 200;
   double base = 100;
   int size = 3;
   boolean xTurn = true;
@@ -41,6 +45,10 @@ public class App extends Application {
   Set<Integer> p1 = new HashSet<>();
   Set<Integer> p2 = new HashSet<>();
   Set<Set<Integer>> conditions = new HashSet<>();
+  long allotedTime = 5000000000L;
+  long timeSinceLastChose = 0L;
+  double xScale = 1;
+  double yScale = 1;
 
 
   List<Screen> screens = new ArrayList<>();
@@ -54,29 +62,7 @@ public class App extends Application {
 
     // add a new screen and make that active screen
 
-    for (int i = 1; i <= 4; i++) {
-      Rectangle line = new Rectangle("Line " + Integer.toString(i),
-              base + gap * (i - 1), base, base + gap * (i - 1), base + gap * 3, 5,
-              Color.BLUE, Color.RED);
-      mainScreen.addUIElement(line);
-    }
-
-    for (int i = 1; i <= 4; i++) {
-      Rectangle line = new Rectangle("Line " + Integer.toString(i + 4),
-              base, base + gap * (i - 1), base + gap * 3, base + gap * (i - 1), 5,
-              Color.BLUE, Color.RED);
-      mainScreen.addUIElement(line);
-
-      Rectangle restartButtonRect = new Rectangle("restartButtonRect", screenHeight/2.5, screenWidth*3/5,
-              screenHeight/2, screenWidth*3/5, screenHeight/16,
-              Color.TURQUOISE, Color.BLACK);
-      Text restartButtonText = new Text("restartButtonText", screenHeight/2.5, screenWidth*3/5,
-              "Restart Game", Color.FIREBRICK);
-      Button restartButton = new Button("restartButton", restartButtonRect, restartButtonText);
-      mainScreen.addUIElement(restartButton);
-    }
-
-    screens.add(mainScreen);
+    mainScreenDraw();
 
     // work back and forth
   }
@@ -99,6 +85,44 @@ public class App extends Application {
     super.onDraw(g);
   }
 
+  private void mainScreenDraw() {
+    for (int i = 1; i <= 4; i++) {
+      Rectangle line = new Rectangle("Line " + Integer.toString(i),
+              base + xGap * (i - 1), base, base + xGap * (i - 1), base + yGap * 3, 5,
+              Color.BLUE, Color.RED);
+      mainScreen.addUIElement(line);
+    }
+
+    for (int i = 1; i <= 4; i++) {
+      Rectangle line = new Rectangle("Line " + Integer.toString(i + 4),
+              base, base + yGap * (i - 1), base + xGap * 3, base + yGap * (i - 1), 5,
+              Color.BLUE, Color.RED);
+      mainScreen.addUIElement(line);
+
+      Rectangle restartButtonRect = new Rectangle("restartButtonRect", screenWidth * 3 / 4,
+              screenHeight * 2 / 4, screenWidth * 3.5 / 4, screenHeight * 2 / 4, screenHeight / 16,
+              Color.TURQUOISE, Color.BLACK);
+      Text restartButtonText = new Text("restartButtonText", screenWidth * 3 / 4.1, screenHeight * 2 / 3.9,
+              "Restart Game", Color.FIREBRICK, 32);
+      Button restartButton = new Button("restartButton", restartButtonRect, restartButtonText);
+      mainScreen.addUIElement(restartButton);
+    }
+
+    Rectangle timerBackgroundRect = new Rectangle("timerBackgroundRect", screenWidth * 3 / 4,
+            screenHeight * 1 / 4, screenWidth * 3.5 / 4,
+            screenHeight * 1 / 4, screenHeight / 16,
+            Color.PURPLE, Color.PURPLE);
+    Rectangle timerForeGroundRect = new Rectangle("timerForeGroundRect", screenWidth * 3 / 4,
+            screenHeight * 1 / 4, screenWidth * 3.5 / 4 - screenWidth * 0.5 / 4 + screenWidth
+            * 0.5 / 4 * (timeSinceLastChose / allotedTime),
+            screenHeight * 1 / 4, screenHeight / 16,
+            Color.ORANGE, Color.ORANGE);
+    mainScreen.addUIElement(timerBackgroundRect);
+    mainScreen.addUIElement(timerForeGroundRect);
+    screens.add(mainScreen);
+  }
+
+
   /**
    * Called periodically and used to update the state of your game.
    *
@@ -107,6 +131,26 @@ public class App extends Application {
   @Override
   protected void onTick(long nanosSincePreviousTick) {
     timeSinceStart += nanosSincePreviousTick;
+    if (!gameOver) {
+      timeSinceLastChose += nanosSincePreviousTick;
+    }
+    if (timeSinceLastChose > allotedTime && !gameOver) {
+      if (xTurn) {
+        victory("p2");
+      } else {
+        victory("p1");
+      }
+
+    }
+
+    mainScreen.removeUIElement("timerForeGroundRect");
+    Rectangle timerForeGroundRect = new Rectangle("timerForeGroundRect", screenWidth * 3 / 4,
+            screenHeight * 1 / 4, screenWidth * 3.5 / 4 - screenWidth * 0.5 / 4 + screenWidth
+            * 0.5 / 4 * ((double) timeSinceLastChose / (double) allotedTime),
+            screenHeight * 1 / 4,
+            screenHeight / 16, Color.ORANGE, Color.ORANGE);
+
+    mainScreen.addUIElement(timerForeGroundRect);
   }
 
 
@@ -123,16 +167,16 @@ public class App extends Application {
     int answerY = 0;
 
     for (int i = 1; i <= 3; i++) {
-      if ((x > base + gap * (i - 1)) && (x < base + gap * (i))) {
+      if ((x > base + xGap * (i - 1)) && (x < base + xGap * (i))) {
         answerX = i;
       }
-      if ((y > base + gap * (i - 1)) && (y < base + gap * (i))) {
+      if ((y > base + yGap * (i - 1)) && (y < base + yGap * (i))) {
         answerY = i;
       }
     }
 
     int ans = answerX + answerY * size - size;
-    if (ans > 9 || ans < 1 ) return 0;
+    if (ans > 9 || ans < 1) return 0;
     return ans;
   }
 
@@ -153,9 +197,18 @@ public class App extends Application {
       System.out.println(boxNum);
       if (boxNum != 0) drawXO(boxNum);
       checkVictory();
-      System.out.println(p1);
-      System.out.println(p2);
-      System.out.println(conditions);
+
+      mainScreen.removeUIElement("turnText");
+
+      String content;
+      if (xTurn) {
+        content = "X's Turn";
+      } else {
+        content = "O's Turn";
+      }
+      Text turnText = new Text("turnText", screenWidth * 3 / 5, screenHeight / 2,
+              content, Color.BLUEVIOLET, 32);
+      mainScreen.addUIElement(turnText);
     }
 
     // check if a button was pressed on the homeScreen
@@ -163,7 +216,6 @@ public class App extends Application {
     if (homeScreen.getActive()) {
       for (UIElement ui : homeScreen.getElements()) {
         if (ui instanceof Button && Screen.between(e.getX(), e.getY(), (Button) ui)) {
-          System.out.println("Button Pressed!");
           String t = ((Button) ui).getTitle();
           switch (t) {
             case "startButton":
@@ -182,23 +234,71 @@ public class App extends Application {
     if (mainScreen.getActive()) {
       for (UIElement ui : mainScreen.getElements()) {
         if (ui instanceof Button && Screen.between(e.getX(), e.getY(), (Button) ui)) {
-          System.out.println("Button Pressed!");
-          String t = ((Button) ui).getTitle();
+          String t = ui.getTitle();
           switch (t) {
             case "restartButton":
-              xoScreen.clear();
+              clearXO();
               p1 = new HashSet<>();
               p2 = new HashSet<>();
-              gameOver = false;
+              mainScreen.removeUIElement("p1Win");
+              mainScreen.removeUIElement("p2Win");
+              mainScreen.removeUIElement("drawText");
               for (int i = 1; i <= size * size; i++) {
                 chosen.put(i, 0);
               }
+              gameOver = false;
+              timeSinceLastChose = 0;
+              break;
+            default:
+              break;
           }
         }
       }
     }
 
 
+  }
+
+
+  /**
+   * Clears a screen of XO elements
+   */
+  void clearXO() {
+
+    Screen temp = new Screen("mainScreen");
+    for (UIElement ele : mainScreen.getElements()) {
+      if (!ele.getTitle().equals("x1") && !ele.getTitle().equals("x2") && !ele.getTitle().equals("c")) {
+        temp.addUIElement(ele);
+      }
+    }
+    mainScreen.clear();
+    for (UIElement ele : temp.getElements()) {
+      mainScreen.addUIElement(ele);
+    }
+
+    List<Screen> tempScreens = new ArrayList<>();
+    for (Screen s : screens) {
+      if (!s.getTitle().equals("mainScreen")) {
+        tempScreens.add(s);
+      }
+    }
+    tempScreens.add(mainScreen);
+    screens = tempScreens;
+  }
+
+  /**
+   * Called when a key is pressed.
+   * @param e		an FX {@link KeyEvent} representing the input event.
+   */
+  @Override
+  protected void onKeyPressed(KeyEvent e) {
+    String character = e.getCode().toString();
+    if (character.equals("ESCAPE")) {
+      homeScreen.setActive();
+      mainScreen.setInactive();
+      xoScreen.setInactive();
+      gameOver = true;
+    }
   }
 
   /**
@@ -212,28 +312,30 @@ public class App extends Application {
     if (column == 0) column = size;
     int row = (boxNum - column) / size + 1;
 
-    System.out.println("chosen: " + chosen);
-    System.out.println("boxNum: " + boxNum);
+    System.out.println("Game Over: " + gameOver);
+
     if (chosen.get(boxNum) == 0 && !gameOver) {
       if (xTurn) {
-        Rectangle x1 = new Rectangle("x1", base + gap * (column - 0.75),
-                base + gap * (row - 0.75), base + gap * (column - 0.25), base + gap * (row - 0.25),
+        Rectangle x1 = new Rectangle("x1", base + xGap * (column - 0.75),
+                base + yGap * (row - 0.75), base + xGap * (column - 0.25), base + yGap * (row - 0.25),
                 2, Color.BROWN, Color.BROWN);
-        Rectangle x2 = new Rectangle("x2", base + gap * (column - 0.25),
-                base + gap * (row - 0.75), base + gap * (column - 0.75), base + gap * (row - 0.25),
+        Rectangle x2 = new Rectangle("x2", base + xGap * (column - 0.25),
+                base + yGap * (row - 0.75), base + xGap * (column - 0.75), base + yGap * (row - 0.25),
                 2, Color.BROWN, Color.BROWN);
         xTurn = false;
-        xoScreen.addUIElement(x1);
-        xoScreen.addUIElement(x2);
+        mainScreen.addUIElement(x1);
+        mainScreen.addUIElement(x2);
         chosen.put(boxNum, 1);
         p1.add(boxNum);
+        timeSinceLastChose = 0L;
       } else {
-        Circle c = new Circle("c", base + gap * (column - 0.85), base + gap * (row - 0.85),
-                gap / 1.5, gap / 1.5, 10, Color.BLUE, Color.BLUE);
-        xoScreen.addUIElement(c);
+        Circle c = new Circle("c", base + xGap * (column - 0.85), base + yGap * (row - 0.85),
+                xGap / 1.5, yGap / 1.5, 10, Color.BLUE, Color.BLUE);
+        mainScreen.addUIElement(c);
         xTurn = true;
         chosen.put(boxNum, 2);
         p2.add(boxNum);
+        timeSinceLastChose = 0L;
       }
       screens.add(xoScreen);
     }
@@ -248,11 +350,29 @@ public class App extends Application {
     if (player.equals("p1")) {
       System.out.println("X's Wins!");
       gameOver = true;
+      Text p1Win = new Text("p1Win", screenWidth * 3 / 4, screenHeight / 1.5,
+              "X's Wins!", Color.BLACK, 32);
+      mainScreen.addUIElement(p1Win);
+      timeSinceLastChose = 0;
     }
     if (player.equals("p2")) {
       System.out.println("O's Wins!");
       gameOver = true;
+      Text p2Win = new Text("p2Win", screenWidth * 3 / 4, screenHeight / 1.5,
+              "O's Wins!", Color.BLACK, 32);
+      mainScreen.addUIElement(p2Win);
+      timeSinceLastChose = 0;
     }
+  }
+
+  /**
+   * The game is a draw.
+   */
+  void draw() {
+    gameOver = true;
+    Text drawText = new Text("drawText", screenWidth * 3 / 4, screenHeight / 1.5,
+            "Draw!", Color.BLACK, 32);
+    mainScreen.addUIElement(drawText);
   }
 
   /**
@@ -263,6 +383,11 @@ public class App extends Application {
       if (p1.containsAll(cond)) victory("p1");
       if (p2.containsAll(cond)) victory("p2");
     }
+    List<Integer> vals = new ArrayList<>();
+    for (int i : chosen.values()) {
+      vals.add(i);
+    }
+    if (!vals.contains(0)) draw();
   }
 
   /**
@@ -274,15 +399,19 @@ public class App extends Application {
     homeScreen.setActive();
 
     Text titleWords = new Text("title", screenWidth / 2.1, screenHeight / 4,
-            "Tic-Tac-Toe", Color.BLACK);
+            "Tic-Tac-Toe", Color.BLACK, 32);
     homeScreen.addUIElement(titleWords);
 
+    Text turnText = new Text("turnText", screenWidth * 3 / 5, screenHeight / 2,
+            "X's Turn", Color.BLUEVIOLET, 32);
+    mainScreen.addUIElement(turnText);
+
     // Buttons
-    Rectangle startButtonRect = new Rectangle("startButtonRect", screenHeight/2.5, screenWidth/2.5,
-            screenHeight/1.5, screenWidth/2.5, screenHeight/16,
+    Rectangle startButtonRect = new Rectangle("startButtonRect", screenHeight / 2.5, screenWidth / 2.5,
+            screenHeight / 1.5, screenWidth / 2.5, screenHeight / 16,
             Color.TURQUOISE, Color.BLACK);
-    Text startButtonText = new Text("startButtonText", screenHeight/2.5, screenWidth/2.5,
-            "Start Game", Color.FIREBRICK);
+    Text startButtonText = new Text("startButtonText", screenHeight / 2.5, screenWidth / 2.5,
+            "Start Game", Color.FIREBRICK, 32);
     Button startButton = new Button("startButton", startButtonRect, startButtonText);
     homeScreen.addUIElement(startButton);
 
@@ -332,6 +461,24 @@ public class App extends Application {
     screenWidth = newSize.x;
     screenHeight = newSize.y;
     System.out.println("Screen Width: " + screenWidth + " Screen Height: " + screenHeight);
+    redrawAll();
+  }
+
+  /**
+   * Redraws everything in a screen
+   */
+  private void redrawAll() {
+    xScale = screenWidth / originalX;
+    yScale = screenHeight / originalY;
+    xGap = xGap * xScale;
+    yGap = yGap * yScale;
+    originalX = screenWidth;
+    originalY = screenHeight;
+    for (Screen s : screens) {
+      for (UIElement ele : s.getElements()) {
+        ele.update(xScale, xScale);
+      }
+    }
   }
 
 }

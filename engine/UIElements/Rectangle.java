@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 /**
  * Rectangle Class
  */
-public class Rectangle extends UIElement {
+public class Rectangle implements UIElement {
 
   private double x1;
   private double y1;
@@ -16,7 +16,7 @@ public class Rectangle extends UIElement {
   private double strokeWidth;
   private Color fillColor;
   private Color strokeColor;
-  private GraphicsContext g;
+  private String title;
 
 
   /**
@@ -27,14 +27,12 @@ public class Rectangle extends UIElement {
    * @param y1          the y1 position
    * @param x2          the x2 position
    * @param y2          the y2 position
-   * @param width       the width
+   * @param strokeWidth       the width
    * @param fillColor   the color of the rectangle fill
    * @param strokeColor the color of the rectangle stroke
    */
   public Rectangle(String title, double x1, double y1, double x2, double y2,
                    double strokeWidth, Color fillColor, Color strokeColor) {
-
-    super(title);
 
     this.x1 = x1;
     this.y1 = y1;
@@ -43,6 +41,7 @@ public class Rectangle extends UIElement {
     this.strokeWidth = strokeWidth;
     this.fillColor = fillColor;
     this.strokeColor = strokeColor;
+    this.title = title;
   }
 
   /**
@@ -57,6 +56,28 @@ public class Rectangle extends UIElement {
     g.setLineWidth(strokeWidth);
     g.strokeLine(x1, y1, x2, y2);
     return g;
+  }
+
+  /**
+   * Returns the title.
+   *
+   * @return the title.
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * Updates based on a scale
+   * @param xScale the x scale value
+   * @param yScale the y scale value
+   */
+  public void update(double xScale, double yScale) {
+    this.strokeWidth = strokeWidth * yScale;
+    this.x1 = x1 * xScale;
+    this.x2 = x2 * xScale;
+    this.y1 = y1 * yScale;
+    this.y2 = y2 * yScale;
   }
 
   /**
